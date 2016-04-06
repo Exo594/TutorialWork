@@ -25,36 +25,36 @@ public class TutoriumFurnace extends BlockContainer {
     private final boolean isActive;
 
     @SideOnly(Side.CLIENT)
-    private IIcon iconFront;
+    public IIcon iconFront;
 
     private static boolean keepInventory;
 
     private final Random rand = new Random();
 
-    public TutoriumFurnace(String unlocalizedName, boolean isActive, float light) {
+    public TutoriumFurnace(String unlocalizedName, boolean isActive) {
         super(Material.iron);
         this.setBlockName(unlocalizedName);
-        this.setLightLevel(light);
         this.isActive = isActive;
         this.setHardness(5.0F);
     }
-
-    @Override
-    public TileEntity createNewTileEntity(World world, int i) {
-        return new TileEntityTutoriumFurnace();
-    }
-
+    
     @SideOnly(Side.CLIENT)
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         this.blockIcon = iconRegister.registerIcon(Main.MODID + ":" + "tutoriumFurnaceOther");
         this.iconFront = iconRegister.registerIcon(Main.MODID + ":" + (this.isActive ? "tutoriumFurnaceFrontOn" : "tutoriumFurnaceFrontOff"));
     }
+    
+    @Override
+    public TileEntity createNewTileEntity(World world, int i) {
+        return new TileEntityTutoriumFurnace();
+    }
+    
 
     @SideOnly(Side.CLIENT)
     @Override
-    public IIcon getIcon(int side, int meta) {
-        return meta == 0 && side == 3 ? this.iconFront : side == 1 ? this.blockIcon : (side == 0 ? this.blockIcon : (side == meta ? this.iconFront : this.blockIcon));
+    public IIcon getIcon(int side, int metadata) {
+        return metadata == 0 && side == 3 ? this.iconFront : (side == metadata ? this.iconFront : this.blockIcon);
     }
 
     public Item getItemDropped(World world, int x, int y, int z) {

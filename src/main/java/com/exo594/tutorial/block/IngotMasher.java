@@ -27,12 +27,12 @@ public class IngotMasher extends BlockContainer {
     private static boolean keepInventory = true;
 
     @SideOnly(Side.CLIENT)
-    private IIcon iconFront;
+    public IIcon iconFront;
 
-    public IngotMasher(String unlocalizedName, boolean blockState) {
+    public IngotMasher(String unlocalizedName, boolean isActive) {
         super(Material.iron);
         rand = new Random();
-        isActive = blockState;
+        this.isActive = isActive;
         this.setBlockName(unlocalizedName);
 
     }

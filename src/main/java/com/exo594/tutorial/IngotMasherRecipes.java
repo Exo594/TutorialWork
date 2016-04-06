@@ -28,7 +28,6 @@ public final class IngotMasherRecipes {
     private IngotMasherRecipes() {
     }
 
-    //used to tell transferItemInStack to play nice with items, apparantly not quite working properly
     public static Boolean itemCanBeMashed(ItemStack itemstack) {
         if (Arrays.asList(ITEMS).contains(itemstack.getItem())) {
             return true;
@@ -58,14 +57,6 @@ public final class IngotMasherRecipes {
     }
 
     public static ItemStack getMashingResult(ArrayList<ItemStack> list) {
-        /*
-         if (mashingList.containsKey(list)) {
-         System.out.println("RETURNING ITEMSTACK!!!");
-         return (ItemStack) mashingList.get(list);           
-         } else {
-         System.out.println("KEYS DON'T MATCH!!!");
-         return null;                    
-         }*/
 
         Iterator iterator = mashingList.entrySet().iterator();
         Map.Entry entry;

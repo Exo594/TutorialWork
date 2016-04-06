@@ -14,8 +14,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
+import thaumcraft.api.IGoggles;
+import thaumcraft.api.IRunicArmor;
+import thaumcraft.api.IWarpingGear;
+import thaumcraft.api.nodes.IRevealer;
 
-public class ItemModArmor extends ItemArmor {
+public class ItemModArmor extends ItemArmor implements IRevealer, IGoggles, IRunicArmor, IWarpingGear {
 
     public String textureName;
 
@@ -53,7 +57,6 @@ public class ItemModArmor extends ItemArmor {
     @SideOnly(Side.CLIENT)
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemstack, int armorSlot) {
 
-        
         ModelBiped armorModel = ClientProxy.armorModels.get(this);
 
         if (armorModel != null) {
@@ -97,5 +100,39 @@ public class ItemModArmor extends ItemArmor {
 
         return armorModel;
     }
-    
+
+    @Override
+    public boolean showNodes(ItemStack itemstack, EntityLivingBase player) {
+        if (player instanceof EntityPlayer) {
+            EntityPlayer entplayer = (EntityPlayer) player;
+            if (entplayer.getCurrentArmor(3) != null && entplayer.getCurrentArmor(3).getItem().equals(ModItems.tutorialHelmet)) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    @Override
+    public boolean showIngamePopups(ItemStack itemstack, EntityLivingBase player) {
+        if (player instanceof EntityPlayer) {
+            EntityPlayer entplayer = (EntityPlayer) player;
+            if (entplayer.getCurrentArmor(3) != null && entplayer.getCurrentArmor(3).getItem().equals(ModItems.tutorialHelmet)) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    @Override
+    public int getRunicCharge(ItemStack itemstack) {
+        return 5;
+    }
+
+    @Override
+    public int getWarp(ItemStack itemstack, EntityPlayer player) {
+        return 5;
+    }
+
 }

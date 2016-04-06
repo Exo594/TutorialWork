@@ -2,6 +2,7 @@ package com.exo594.tutorial.handlers;
 
 import com.exo594.tutorial.item.ModItems;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,12 @@ public class CraftingHandler {
                 }
             }
         }
+    }
+    
+    //For dev purposes
+    @SubscribeEvent
+    public void onPickup(PlayerEvent.ItemPickupEvent event){
+        System.out.println(event.pickedUp);
     }
 
 }

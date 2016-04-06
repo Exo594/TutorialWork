@@ -27,7 +27,7 @@ public class ItemModMultitool extends ItemPickaxe {
     public Set<String> getToolClasses(ItemStack stack) {
         return ImmutableSet.of("pickaxe", "spade", "axe", "hoe");
     }
-    private static Set effectiveAgainst = Sets.newHashSet(new Block[]{
+    private static final Set effectiveAgainst = Sets.newHashSet(new Block[]{
         Blocks.grass, Blocks.dirt, Blocks.sand, Blocks.gravel,
         Blocks.snow_layer, Blocks.snow, Blocks.clay, Blocks.farmland,
         Blocks.soul_sand, Blocks.mycelium, Blocks.planks, Blocks.bookshelf,
@@ -48,6 +48,17 @@ public class ItemModMultitool extends ItemPickaxe {
 
     }
 
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (player.isSneaking()) {
+            player.inventory.decrStackSize(player.inventory.currentItem, 1);
+            player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(ModItems.tutorialRifle));
+
+        }
+        return stack;
+    }
+
+    @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         if (!player.canPlayerEdit(x, y, z, side, stack)) {
             return false;

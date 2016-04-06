@@ -11,6 +11,7 @@ public class EntityMiningChargePrimed extends Entity {
 
     public int fuse;
     private EntityLivingBase tntPlacedBy;
+    public int originalPosY;
 
     public EntityMiningChargePrimed(World world) {
         super(world);
@@ -19,18 +20,13 @@ public class EntityMiningChargePrimed extends Entity {
         this.yOffset = this.height / 2.0F;
     }
 
-    public EntityMiningChargePrimed(World world, double x, double y, double z, EntityLivingBase player) {
+    public EntityMiningChargePrimed(World world, double x, int y, double z, EntityLivingBase player) {
         this(world);
-        this.setPosition(x, y, z);
-        float f = (float) (Math.random() * Math.PI * 2.0D);
-        this.motionX = (double) (-((float) Math.sin((double) f)) * 0.02F);
-        this.motionY = 0.20000000298023224D;
-        this.motionZ = (double) (-((float) Math.cos((double) f)) * 0.02F);
-        this.fuse = 80;
-        this.prevPosX = x;
-        this.prevPosY = y;
-        this.prevPosZ = z;
+        this.setPosition(x, -1, z);
+        this.fuse = 60;
         this.tntPlacedBy = player;
+        this.posX = x;
+        this.originalPosY = y;
     }
 
     @Override
@@ -60,36 +56,23 @@ public class EntityMiningChargePrimed extends Entity {
      */
     @Override
     public void onUpdate() {
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
-        this.motionY -= 0.03999999910593033D;
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        this.motionX *= 0.9800000190734863D;
-        this.motionY *= 0.9800000190734863D;
-        this.motionZ *= 0.9800000190734863D;
-
-        if (this.onGround) {
-            this.motionX *= 0.699999988079071D;
-            this.motionZ *= 0.699999988079071D;
-            this.motionY *= -0.5D;
-        }
-
         if (this.fuse-- <= 0) {
             this.setDead();
+            worldObj.setBlockToAir((int)this.posX, (int)this.originalPosY + 1, (int)this.posZ);
 
             if (!this.worldObj.isRemote) {
                 this.explode();
             }
         } else {
-            this.worldObj.spawnParticle("smoke", this.posX, this.posY + 0.5D, this.posZ, 0.0D, 0.0D, 0.0D);
+            this.worldObj.spawnParticle("smoke", this.posX, this.originalPosY + 0.5D, this.posZ, 0.0D, 0.0D, 0.0D);
         }
     }
 
     private void explode() {
         float f = 1.5F;
+        this.worldObj.createExplosion(this, this.posX, this.originalPosY, this.posZ, 3, true);
         for(int i = 0; i < 10; i++){
-        this.worldObj.createExplosion(this, this.posX, this.posY-1-i, this.posZ, f, true);
+        this.worldObj.createExplosion(this, this.posX, this.originalPosY-i, this.posZ, f, true);
         }
     }
 

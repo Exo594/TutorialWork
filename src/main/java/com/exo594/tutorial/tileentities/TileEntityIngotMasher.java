@@ -80,9 +80,9 @@ public class TileEntityIngotMasher extends TileEntity implements ISidedInventory
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        
+
         if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this || !Minecraft.getMinecraft().thePlayer.getStatFileWriter().hasAchievementUnlocked(tutorialItem)) {
-            return false;            
+            return false;
         } else {
             return player.getDistanceSq((double) xCoord + 0.5D, (double) yCoord + 0.5D, (double) zCoord + 0.5D) <= 64;
         }
@@ -208,7 +208,7 @@ public class TileEntityIngotMasher extends TileEntity implements ISidedInventory
     private boolean canMash() {
 
         if (slots[0] == null || slots[1] == null) {
-            
+
             return false;
         }
 
@@ -264,7 +264,26 @@ public class TileEntityIngotMasher extends TileEntity implements ISidedInventory
                 for (int i = 0; i < 2; i++) {
                     if (slots[i].stackSize <= 0) {
                         slots[i] = new ItemStack(slots[i].getItem().setFull3D());
-                    } else if(slots[i].getItem() != ModItems.furnaceToken){
+                    } else if (slots[i].getItem() != ModItems.furnaceToken) {
+                        slots[i].stackSize--;
+                    }
+
+                    if (slots[i].stackSize <= 0) {
+                        slots[i] = null;
+                    }
+                }
+            } else if (slots[0].getItem() == ModItems.furnaceToken) {
+                itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.slots[1]);
+                if (slots[3] == null) {
+                    slots[3] = itemstack.copy();
+                } else if (slots[3].isItemEqual(itemstack)) {
+                    slots[3].stackSize += itemstack.stackSize;
+                }
+
+                for (int i = 0; i < 2; i++) {
+                    if (slots[i].stackSize <= 0) {
+                        slots[i] = new ItemStack(slots[i].getItem().setFull3D());
+                    } else if (slots[i].getItem() != ModItems.furnaceToken) {
                         slots[i].stackSize--;
                     }
 
@@ -273,62 +292,34 @@ public class TileEntityIngotMasher extends TileEntity implements ISidedInventory
                     }
                 }
 
-                if (slots[0].getItem() == ModItems.furnaceToken) {
-                    itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.slots[1]);
-                    if (slots[3] == null) {
-                        slots[3] = itemstack.copy();
-                    } else if (slots[3].isItemEqual(itemstack)) {
-                        slots[3].stackSize += itemstack.stackSize;
+            } else if (slots[0] != null && slots[1] != null) {
+
+                mashingResultsList = new ArrayList<ItemStack>();
+                mashingResultsList.add(new ItemStack(this.slots[0].getItem()));
+                mashingResultsList.add(new ItemStack(this.slots[1].getItem()));
+
+                itemstack = IngotMasherRecipes.getMashingResult(mashingResultsList);
+
+                if (slots[3] == null) {
+                    slots[3] = itemstack.copy();
+                } else if (slots[3].isItemEqual(itemstack)) {
+                    slots[3].stackSize += itemstack.stackSize;
+                }
+
+                for (int i = 0; i < 2; i++) {
+                    if (slots[i].stackSize <= 0) {
+                        slots[i] = new ItemStack(slots[i].getItem().setFull3D());
+                    } else {
+                        slots[i].stackSize--;
                     }
 
-                    for (int i = 0; i < 2; i++) {
-                        if (slots[i].stackSize <= 0) {
-                            slots[i] = new ItemStack(slots[i].getItem().setFull3D());
-                        } else if(slots[i].getItem() != ModItems.furnaceToken){
-                            slots[i].stackSize--;
-                        }
-
-                        if (slots[i].stackSize <= 0) {
-                            slots[i] = null;
-                        }
-                    }
-
-                    if (slots[0] != null && slots[1] != null) {
-
-                        mashingResultsList = new ArrayList<ItemStack>();
-                        mashingResultsList.add(new ItemStack(this.slots[0].getItem()));
-                        mashingResultsList.add(new ItemStack(this.slots[1].getItem()));
-
-                        itemstack = IngotMasherRecipes.getMashingResult(mashingResultsList);
-
-                        if (slots[3] == null) {
-                            slots[3] = itemstack.copy();
-                        } else if (slots[3].isItemEqual(itemstack)) {
-                            slots[3].stackSize += itemstack.stackSize;
-                        }
-
-                        for (int i = 0; i < 2; i++) {
-                            if (slots[i].stackSize <= 0) {
-                                slots[i] = new ItemStack(slots[i].getItem().setFull3D());
-                            } else {
-                                slots[i].stackSize--;
-                            }
-
-                            if (slots[i].stackSize <= 0) {
-                                slots[i] = null;
-                            }
-                        }
+                    if (slots[i].stackSize <= 0) {
+                        slots[i] = null;
                     }
                 }
             }
         }
     }
-
-    
-
-    
-
-    
 
     public boolean hasPower() {
         return dualPower > 0;

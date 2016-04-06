@@ -1,11 +1,13 @@
 package com.exo594.tutorial;
 
 import com.exo594.tutorial.client.settings.Keybindings;
-import com.exo594.tutorial.entities.EntityMiningChargePrimed;
-import com.exo594.tutorial.item.EntityTutoriumRound;
+import com.exo594.tutorial.entities.EntityCyclops;
+import com.exo594.tutorial.entities.EntityDroughtSeed;
+import com.exo594.tutorial.entities.EntityTutoriumRound;
 import com.exo594.tutorial.item.ModItems;
 import com.exo594.tutorial.item.TutoriumGrenade;
 import com.exo594.tutorial.models.Model3dArmor;
+import com.exo594.tutorial.models.ModelCyclops;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -18,10 +20,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 
 public class ClientProxy extends CommonProxy {
-    
+
     public static ServerProxy serverProxy;
 
     public static final Map<Item, ModelBiped> armorModels = new HashMap<Item, ModelBiped>();
@@ -30,7 +33,10 @@ public class ClientProxy extends CommonProxy {
     public void registerRenderThings() {
         RenderingRegistry.registerEntityRenderingHandler(EntityTutoriumRound.class, new RenderSnowball(ModItems.tutoriumRound));
         RenderingRegistry.registerEntityRenderingHandler(TutoriumGrenade.class, new RenderSnowball(ModItems.tutoriumGrenade));
-        RenderingRegistry.registerEntityRenderingHandler(EntityMiningChargePrimed.class, new ExplosiveRender());    //Not behaving properly
+        RenderingRegistry.registerEntityRenderingHandler(EntityCyclops.class, new RenderCyclops(new ModelCyclops(), 0.3F));
+        RenderingRegistry.registerEntityRenderingHandler(EntityDroughtSeed.class, new RenderSnowball(Items.snowball));
+
+        
 
         Model3dArmor tutorial_3d_armor = new Model3dArmor(1F);
         Model3dArmor tutorial_3d_legs = new Model3dArmor(0.5F);
@@ -48,16 +54,21 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
+        tggNetworkPractice.StartupClientOnly.preInitClientOnly();
     }
 
     @Override
     public void init(FMLInitializationEvent e) {
         super.init(e);
+        this.registerRenderThings();
+        tggNetworkPractice.StartupClientOnly.initClientOnly();
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent e) {
         super.postInit(e);
+        tggNetworkPractice.StartupClientOnly.postInitClientOnly();
+
     }
 
     @Override

@@ -73,7 +73,7 @@ public class ContainerIngotMasher extends Container {
             } // itemstack is in player inventory, try to place in appropriate furnace slot
             else if (par2 != FUEL && par2 != INPUT_1 && par2 != INPUT_2) {
 // if it can be smelted, place in the input slots
-                if (IngotMasherRecipes.itemCanBeMashed(itemstack1)) {            //DOES NOT LIKE SOME PART OF THIS LINE
+                if (IngotMasherRecipes.itemCanBeMashed(itemstack1)) {
 // try to place in either Input slot; add 1 to final input slot because mergeItemStack uses < index
                     if (!this.mergeItemStack(itemstack1, INPUT_1, INPUT_2 + 1, false)) {
                         return null;

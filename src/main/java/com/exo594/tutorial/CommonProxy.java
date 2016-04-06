@@ -42,8 +42,8 @@ public class CommonProxy {
     }
 
     public void preInit(FMLPreInitializationEvent e) {
-        ModItems.init();
         ModBlocks.init();
+        ModItems.init();
         ModPlants.init();
         ModAchievements.init();
 
@@ -69,6 +69,9 @@ public class CommonProxy {
         }
 
         ModPotions.init();
+        
+            tggNetworkPractice.StartupCommon.preInitCommon();
+
 
     }
 
@@ -80,9 +83,11 @@ public class CommonProxy {
         MinecraftForge.addGrassSeed(new ItemStack(ModItems.tutorialItem), 100);
         ChestGenHooks.getInfo(ChestGenHooks.MINESHAFT_CORRIDOR).addItem(new WeightedRandomChestContent(new ItemStack(ModItems.tutorialItem), 1, 32, 100));
         GameRegistry.registerWorldGenerator(new ModWorldGen(), 0);
+        
+        tggNetworkPractice.StartupCommon.initCommon();
     }
 
     public void postInit(FMLPostInitializationEvent e) {
-
+        tggNetworkPractice.StartupCommon.postInitCommon();
     }
 }

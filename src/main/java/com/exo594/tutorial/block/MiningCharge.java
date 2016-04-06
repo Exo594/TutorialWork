@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.exo594.tutorial.block;
 
 import com.exo594.tutorial.Main;
@@ -28,13 +23,20 @@ public class MiningCharge extends Block {
     @SideOnly(Side.CLIENT)
     private IIcon bottomIcon;
 
-    public MiningCharge(String unlocalizedName, Float light) {
+    public MiningCharge(String unlocalizedName) {
         super(Material.tnt);
         this.setBlockName(unlocalizedName);
-        this.setLightLevel(light);
         this.setCreativeTab(Main.tabTutorialMod);
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void registerBlockIcons(IIconRegister icon) {
+        this.blockIcon = icon.registerIcon(Main.MODID + ":tutoriumFurnaceOther");
+        this.topIcon = icon.registerIcon(Main.MODID + ":miningCharge_top");
+        this.bottomIcon = icon.registerIcon(Main.MODID + ":miningCharge_bottom");
+    }
+    
     /*
      * Gets the block's texture. Args: side, meta
      */
@@ -53,7 +55,7 @@ public class MiningCharge extends Block {
 
         if (world.isBlockIndirectlyGettingPowered(x, y, z)) {
             this.onBlockDestroyedByPlayer(world, x, y, z, 1);
-            world.setBlockToAir(x, y, z);
+            world.setBlock(x, y, z, ModBlocks.tutorialBlock, 0, 3);
         }
     }
 
@@ -66,7 +68,7 @@ public class MiningCharge extends Block {
     public void onNeighborBlockChange(World world, int x, int y, int z, Block neighborBlock) {
         if (world.isBlockIndirectlyGettingPowered(x, y, z)) {
             this.onBlockDestroyedByPlayer(world, x, y, z, 1);
-            world.setBlockToAir(x, y, z);
+            world.setBlock(x, y, z, ModBlocks.tutorialBlock, 0, 3);
         }
     }
 
@@ -82,11 +84,12 @@ public class MiningCharge extends Block {
      * Called upon the block being destroyed by an explosion
      */
     @Override
-    public void onBlockDestroyedByExplosion(World world, int p_149723_2_, int p_149723_3_, int p_149723_4_, Explosion p_149723_5_) {
+    public void onBlockDestroyedByExplosion(World world, int x, int y, int z, Explosion p_149723_5_) {
         if (!world.isRemote) {
-            EntityMiningChargePrimed entitymcp = new EntityMiningChargePrimed(world, (double) ((float) p_149723_2_ + 0.5F), (double) ((float) p_149723_3_ + 0.5F), (double) ((float) p_149723_4_ + 0.5F), p_149723_5_.getExplosivePlacedBy());
+            EntityMiningChargePrimed entitymcp = new EntityMiningChargePrimed(world, x, y, z, p_149723_5_.getExplosivePlacedBy());
             entitymcp.fuse = world.rand.nextInt(entitymcp.fuse / 4) + entitymcp.fuse / 8;
             world.spawnEntityInWorld(entitymcp);
+            world.setBlock(x, y, z, ModBlocks.tutorialBlock, 0, 3);
         }
     }
 
@@ -102,9 +105,10 @@ public class MiningCharge extends Block {
     public void func_150114_a(World world, int x, int y, int z, int metaData, EntityLivingBase p_150114_6_) {
         if (!world.isRemote) {
             if ((metaData & 1) == 1) {
-                EntityMiningChargePrimed entitymcp = new EntityMiningChargePrimed(world, (double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), p_150114_6_);
+                EntityMiningChargePrimed entitymcp = new EntityMiningChargePrimed(world, x, y, z, p_150114_6_);
                 world.spawnEntityInWorld(entitymcp);
                 world.playSoundAtEntity(entitymcp, "game.tnt.primed", 1.0F, 1.0F);
+                world.setBlock(x, y, z, ModBlocks.tutorialBlock, 0, 3);
             }
         }
     }
@@ -116,7 +120,7 @@ public class MiningCharge extends Block {
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_) {
         if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == Items.flint_and_steel) {
             this.func_150114_a(world, x, y, z, 1, player);
-            world.setBlockToAir(x, y, z);
+            world.setBlock(x, y, z, ModBlocks.tutorialBlock, 0, 3);
             player.getCurrentEquippedItem().damageItem(1, player);
             return true;
         } else {
@@ -131,14 +135,6 @@ public class MiningCharge extends Block {
      */
     @Override
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        /*if (entity instanceof EntityArrow && !world.isRemote) {
-            EntityArrow entityarrow = (EntityArrow) entity;
-
-            if (entityarrow.isBurning()) {
-                this.func_150114_a(world, x, y, z, 1, entityarrow.shootingEntity instanceof EntityLivingBase ? (EntityLivingBase) entityarrow.shootingEntity : null);
-                world.setBlockToAir(x, y, z);
-            }
-        }*/
     }
 
     /*
@@ -147,13 +143,5 @@ public class MiningCharge extends Block {
     @Override
     public boolean canDropFromExplosion(Explosion p_149659_1_) {
         return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister icon) {
-        this.blockIcon = icon.registerIcon(Main.MODID + ":tutoriumFurnaceOther");
-        this.topIcon = icon.registerIcon(Main.MODID + ":miningCharge_top");
-        this.bottomIcon = icon.registerIcon(Main.MODID + ":miningCharge_bottom");
     }
 }
